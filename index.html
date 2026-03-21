@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matty Doe — Developer & Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1714;
+    --accent: #C84B2F;
+    --warm-mid: #8C7B6B;
+    --warm-light: #E8DDD0;
+    --gold: #C9A84C;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Cabinet Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, opacity 0.3s;
+    opacity: 0.5;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: transparent;
+    mix-blend-mode: normal;
+  }
+  nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 3rem; right: 3rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--warm-mid), transparent);
+    opacity: 0.4;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 4rem 3rem;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+  .hero-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3.5rem, 6vw, 6.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.5s;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-desc {
+    margin-top: 2rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--warm-mid);
+    max-width: 400px;
+    font-weight: 400;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.7s;
+  }
+  .hero-links {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.9s;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    transition: background 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+  .btn-outline {
+    border: 1.5px solid var(--warm-mid);
+    color: var(--ink);
+    padding: 0.83rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-graphic {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Large decorative ring */
+  .hero-ring {
+    width: 520px; height: 520px;
+    border: 1px solid rgba(200, 75, 47, 0.15);
+    border-radius: 50%;
+    position: absolute;
+    animation: spin 25s linear infinite;
+  }
+  .hero-ring::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 50%;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+  .hero-ring-2 {
+    width: 360px; height: 360px;
+    border: 1px dashed rgba(201, 168, 76, 0.2);
+    border-radius: 50%;
+    position: absolute;
+    animation: spin 18s linear infinite reverse;
+  }
+  .hero-center-box {
+    width: 220px; height: 220px;
+    background: var(--warm-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 1.1s;
+  }
+  .hero-center-box .gpa {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .hero-center-box .gpa-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+  }
+  .hero-stats {
+    position: absolute;
+    right: 2rem; bottom: 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.3s;
+  }
+  .stat-item {
+    text-align: right;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--ink);
+    display: block;
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.5s;
+  }
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: var(--warm-mid);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--accent);
+    animation: slideLine 2s ease-in-out infinite;
+  }
+
+  /* SECTIONS GENERAL */
+  section { position: relative; }
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 3rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--warm-light), transparent);
+  }
+
+  /* ABOUT / SKILLS */
+  .about-section { background: var(--ink); }
+  .about-section .section-title { color: var(--cream); }
+  .about-section .section-num { color: var(--gold); }
+  .about-section .section-line { background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .about-text {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: rgba(245,240,232,0.7);
+    font-weight: 400;
+  }
+  .about-text strong {
+    color: var(--cream);
+    font-weight: 700;
+  }
+  .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+  }
+  .skill-group-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .skill-tag {
+    padding: 0.35rem 0.85rem;
+    border: 1px solid rgba(245,240,232,0.15);
+    color: rgba(245,240,232,0.8);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .skill-tag:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--warm-light);
+  }
+  .project-card {
+    background: var(--cream);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 3px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .project-card:hover::before { width: 100%; }
+  .project-card:hover { background: #F0E9DE; }
+  .project-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    color: var(--warm-mid);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .project-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+  .project-desc {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--warm-mid);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tech-tag {
+    background: var(--warm-light);
+    padding: 0.25rem 0.7rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+  }
+  .project-award {
+    position: absolute;
+    top: 2.5rem; right: 2.5rem;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+  }
+
+  /* EXPERIENCE */
+  .exp-section { background: var(--warm-light); }
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(26,23,20,0.1);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .exp-item:first-child { border-top: 1px solid rgba(26,23,20,0.1); }
+  .exp-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--warm-mid);
+    padding-top: 0.2rem;
+    line-height: 1.6;
+  }
+  .exp-role {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    line-height: 1.2;
+  }
+  .exp-org {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .exp-note {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--warm-mid);
+    font-weight: 400;
+  }
+
+  /* EDUCATION */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .edu-card {
+    border: 1px solid var(--warm-light);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--cream);
+  }
+  .edu-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: var(--accent);
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    opacity: 0.15;
+  }
+  .edu-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    color: var(--warm-mid);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .edu-school {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+  }
+  .edu-degree {
+    font-size: 0.9rem;
+    color: var(--warm-mid);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+  .edu-gpa {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .edu-gpa-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--warm-mid);
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+  .edu-awards {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .award-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .award-pill::before {
+    content: '✦';
+    color: var(--gold);
+    font-size: 0.6rem;
+  }
+
+  /* HOBBIES */
+  .hobbies-section { background: var(--ink); }
+  .hobbies-section .section-title { color: var(--cream); }
+  .hobbies-section .section-num { color: var(--gold); }
+  .hobbies-section .section-line { background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent); }
+  .hobbies-flex {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .hobby-card {
+    border: 1px solid rgba(245,240,232,0.1);
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .hobby-card:hover { border-color: var(--gold); }
+  .hobby-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .hobby-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+  .hobby-detail {
+    font-size: 0.88rem;
+    color: rgba(245,240,232,0.5);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .hobby-badge {
+    position: absolute;
+    top: 2rem; right: 2rem;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+  }
+
+  /* CONTACT */
+  .contact-section { background: var(--cream); }
+  .contact-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 8rem 3rem;
+  }
+  .contact-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .contact-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  .contact-title em { font-style: italic; color: var(--accent); }
+  .contact-sub {
+    font-size: 1rem;
+    color: var(--warm-mid);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-name {
+    font-family: 'DM Serif Display', serif;
+    color: var(--cream);
+    font-size: 1.1rem;
+    opacity: 0.6;
+  }
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes slideLine {
+    0%   { left: -100%; }
+    50%  { left: 100%; }
+    100% { left: 100%; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .about-grid, .edu-grid, .hobbies-flex { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    nav { padding: 1.2rem 1.5rem; }
+    nav::after { left: 1.5rem; right: 1.5rem; }
+    .section-inner { padding: 4rem 1.5rem; }
+    .hero-left { padding: 7rem 1.5rem 3rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .nav-links { gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">MD.</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Computer Science · Builder · Creator</p>
+    <h1 class="hero-name">Matty<br><em>Doe.</em></h1>
+    <p class="hero-desc">
+      CS student at College University with a perfect 4.0 GPA, building thoughtful software — from hackathon apps to full-stack tools. Open to summer internships.
+    </p>
+    <div class="hero-links">
+      <a href="https://mattydoe.com" class="btn-primary" target="_blank">View Portfolio →</a>
+      <a href="mailto:mattydoe@gmail.com" class="btn-outline">Say Hello</a>
+    </div>
+    <div class="scroll-hint">
+      <span class="scroll-line"></span>
+      Scroll to explore
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-graphic">
+      <div class="hero-ring"></div>
+      <div class="hero-ring-2"></div>
+      <div class="hero-center-box">
+        <span class="gpa">4.0</span>
+        <span class="gpa-label">GPA · B.S. CS</span>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">3+</span>
+        <span class="stat-lbl">Projects Shipped</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">5+</span>
+        <span class="stat-lbl">Years Tutoring</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">∞</span>
+        <span class="stat-lbl">Curiosity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / SKILLS -->
+<section class="about-section" id="about">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About Me</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid reveal">
+      <div>
+        <p class="about-text">
+          I'm a <strong>Computer Science student</strong> at College University graduating June 2026, maintaining a perfect 4.0 GPA. I love building things that sit at the intersection of <strong>great engineering and real user value</strong> — whether that's a mobile hackathon project, a live Twitch tool, or a Minecraft plugin.
+        </p>
+        <br>
+        <p class="about-text">
+          Beyond code, I've been tutoring K–12 students in math and coding for over 5 years, managing charitable events, and competing nationally in timekeeping (yes, it's a real thing — and I won $1,500 doing it). I'm driven by <strong>curiosity, craft, and community</strong>.
+        </p>
+      </div>
+      <div class="skills-grid">
+        <div>
+          <div class="skill-group-label">Languages</div>
+          <div class="skill-tags">
+            <span class="skill-tag">C/C++</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">TypeScript</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">HTML/CSS</span>
+            <span class="skill-tag">Dart</span>
+            <span class="skill-tag">LaTeX</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-label">Tools & Frameworks</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Flutter</span>
+            <span class="skill-tag">Webpack</span>
+            <span class="skill-tag">Supabase</span>
+            <span class="skill-tag">Git/GitHub</span>
+            <span class="skill-tag">Unix Shell</span>
+            <span class="skill-tag">VS Code</span>
+            <span class="skill-tag">IntelliJ</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-label">APIs & Databases</div>
+          <div class="skill-tags">
+            <span class="skill-tag">INRIX API</span>
+            <span class="skill-tag">Twitch API</span>
+            <span class="skill-tag">Google Maps</span>
+            <span class="skill-tag">Spigot/Maven</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Projects</h2>
+      <div class="section-line"></div>
+    </div>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-award">🏅 Honorable Mention</div>
+      <div class="project-num">01 · Nov 2023</div>
+      <h3 class="project-name">Carbon</h3>
+      <p class="project-desc">A social mobile app that gamifies eco-friendliness using real-time traffic and route data. Built in 48 hours for the INRIX Hack 2023 hackathon with a team.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Flutter</span>
+        <span class="tech-tag">Dart</span>
+        <span class="tech-tag">Supabase</span>
+        <span class="tech-tag">INRIX API</span>
+        <span class="tech-tag">Google Maps</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">02 · May 2023 – Present</div>
+      <h3 class="project-name">ChatBuzz</h3>
+      <p class="project-desc">A full-stack web app for Twitch livestreamers. Surfaces repeated chat messages as overlays in OBS, using OAuth to authenticate and stream real-time chat data.</p>
+      <div class="project-tech">
+        <span class="tech-tag">TypeScript</span>
+        <span class="tech-tag">HTML/CSS</span>
+        <span class="tech-tag">Webpack</span>
+        <span class="tech-tag">Twitch API</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">03 · Aug 2022</div>
+      <h3 class="project-name">FoodDropper</h3>
+      <p class="project-desc">A Minecraft server plugin constraining how players restore hunger — with polished UX, persistent data containers that survive plugin resets, and carefully tuned food mechanics.</p>
+      <div class="project-tech">
+        <span class="tech-tag">Java</span>
+        <span class="tech-tag">Maven</span>
+        <span class="tech-tag">Spigot API</span>
+        <span class="tech-tag">IntelliJ</span>
+      </div>
+    </div>
+    <div class="project-card reveal" style="display:flex; align-items:center; justify-content:center; min-height: 280px; flex-direction: column; gap: 1rem;">
+      <span style="font-family:'DM Serif Display',serif; font-size:3rem; color:var(--warm-light);">✦</span>
+      <p style="font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--warm-mid); text-align:center;">More projects<br>in progress</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="exp-section" id="experience">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="exp-list">
+      <div class="exp-item reveal">
+        <div class="exp-date">Sept 2023<br>→ Present</div>
+        <div>
+          <div class="exp-role">Member</div>
+          <div class="exp-org">Competitive Programming Club</div>
+          <div class="exp-note">Solving algorithmic challenges, sharpening problem-solving skills alongside peers in a competitive programming environment.</div>
+        </div>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-date">2019<br>→ Present</div>
+        <div>
+          <div class="exp-role">Tutor</div>
+          <div class="exp-org">Apex Tutoring</div>
+          <div class="exp-note">Routinely tutor K–12 students in mathematics and coding. Over 5 years of hands-on teaching experience adapting to each student's unique learning style.</div>
+        </div>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-date">2018<br>→ Present</div>
+        <div>
+          <div class="exp-role">Volunteer &amp; Manager</div>
+          <div class="exp-org">Luigi Team Charity</div>
+          <div class="exp-note">Earned an award for philanthropic hours. Manages the annual distribution of 100 fully-stocked backpacks to children in need each year.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Education</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <div class="edu-year">Graduating June 2026</div>
+        <div class="edu-school">College University</div>
+        <div class="edu-degree">B.S. Computer Science</div>
+        <div class="edu-gpa">4.0</div>
+        <div class="edu-gpa-lbl">GPA / 4.0</div>
+        <div class="edu-awards">
+          <span class="award-pill">Dean's Honor List — 3× recipient</span>
+          <span class="award-pill">OOP · DSA · Embedded Systems</span>
+          <span class="award-pill">Discrete Math · Probability &amp; Stats</span>
+        </div>
+      </div>
+      <div class="edu-card reveal">
+        <div class="edu-year">Graduated June 2022</div>
+        <div class="edu-school">Little High School</div>
+        <div class="edu-degree">Dual Enrollment — Mission Community College</div>
+        <div class="edu-gpa">4.44</div>
+        <div class="edu-gpa-lbl">GPA / 4.0 Weighted</div>
+        <div class="edu-awards">
+          <span class="award-pill">AP Scholar with Distinction — 2×</span>
+          <span class="award-pill">World Language History Award (Spanish)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOBBIES -->
+<section class="hobbies-section">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Beyond Code</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="hobbies-flex">
+      <div class="hobby-card reveal">
+        <span class="hobby-icon">🥁</span>
+        <div class="hobby-title">Drums</div>
+        <div class="hobby-detail">Played symphonic, jazz, and marching band from 2013 to 2019. Six years of discipline, rhythm, and performance under pressure.</div>
+      </div>
+      <div class="hobby-card reveal">
+        <div class="hobby-badge">🏆 3rd Place · $1,500</div>
+        <span class="hobby-icon">⏱</span>
+        <div class="hobby-title">Timekeeping Championships</div>
+        <div class="hobby-detail">Placed 3rd nationally in the Time Keeping Challenge Championship (Feb–May 2022) — competing against high schoolers across the country in counting seconds and minutes without a clock.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <p class="contact-eyebrow reveal">Let's Connect</p>
+    <h2 class="contact-title reveal">Let's build something <em>great.</em></h2>
+    <p class="contact-sub reveal">
+      I'm open to internship opportunities, collaborations, and interesting projects. If you think we'd work well together, I'd love to hear from you.
+    </p>
+    <div class="contact-links reveal">
+      <a href="mailto:mattydoe@gmail.com" class="btn-primary">mattydoe@gmail.com</a>
+      <a href="https://linkedin.com/in/mattydoe" class="btn-outline" target="_blank">LinkedIn</a>
+      <a href="https://github.com/mattyDoe" class="btn-outline" target="_blank">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-name">Matty Doe</div>
+  <div class="footer-note">Updated January 2024 · Made with intention</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+  document.querySelectorAll('a, button, .project-card, .skill-tag, .hobby-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.opacity = '0.2';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
